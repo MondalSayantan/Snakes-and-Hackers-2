@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Bellefair&display=swap");
+
+.App {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  background-color: #101010;
+}
+
+.winner {
+  transition: all ease-in 0.3s;
+  display: flex;
+  opacity: 1;
+  font-size: 1.5rem;
+  font-weight: 600;
+  gap: 1vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50vw;
+  height: 51vh;
+  position: absolute;
+  top: 46%;
+  left: 42%;
+  margin: auto;
+  transform: translate(-50%, -70%);
+  background-color: orangered;
+  backdrop-filter: 5px;
+  padding: 0.5rem;
+  padding-bottom: 1rem;
+  border-radius: 10%;
+}
+
+.shrink {
+  transform: scale(0.1);
+  opacity: 0;
+}
