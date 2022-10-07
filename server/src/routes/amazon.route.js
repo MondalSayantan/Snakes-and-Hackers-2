@@ -39,8 +39,6 @@ router.post("/", async (req, res) => {
       console.error(error);
       res.status(500).send(error);
     });
-
-  //   res.send("Hello World");
 });
 
 module.exports = router;

@@ -32,8 +32,8 @@ const Box = ({
           <h1>
             {currentUser} (You): {sign}
           </h1>
-          <h1>Product Title: {amazonTitle}</h1>
-          <h1>Product Price: {amazonPrice}</h1>
+          <h1>Item: {amazonTitle}</h1>
+          <h1>Price: {amazonPrice}</h1>
         </div>
         <img src={amazonImage} alt="product" className="h-48 w-32 ml-5" />
       </div>
@@ -45,8 +45,8 @@ const Box = ({
           ) : (
             <h1>Player 1 (Opponent): {otherSign}</h1>
           )}
-          <h1>Product Title: {oppAmazonTitle}</h1>
-          <h1>Product Price: {oppAmazonPrice}</h1>
+          <h1>Item: {oppAmazonTitle}</h1>
+          <h1>Price: {oppAmazonPrice}</h1>
         </div>
         <img src={oppAmazonImage} alt="product" className="h-48 w-32 ml-5" />
       </div>
