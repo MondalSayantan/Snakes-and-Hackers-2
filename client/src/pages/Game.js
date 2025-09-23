@@ -16,23 +16,30 @@ function Game() {
   const room = data.roomCode;
   const navigate = useNavigate();
 
-  const [amazonTitle] = useState(localStorage.getItem("amazonTitle"));
-  const [amazonPrice] = useState(localStorage.getItem("amazonPrice"));
-  const [amazonImage] = useState(localStorage.getItem("amazonImage"));
-  const [amazonUrl] = useState(localStorage.getItem("amazonUrl"));
-  const [currentName] = useState(localStorage.getItem("name"));
-  const [currentEmail] = useState(localStorage.getItem("email"));
+  // Grouped state for current user Amazon info
+  const [amazonInfo] = useState({
+    title: localStorage.getItem("amazonTitle"),
+    price: localStorage.getItem("amazonPrice"),
+    image: localStorage.getItem("amazonImage"),
+    url: localStorage.getItem("amazonUrl"),
+    name: localStorage.getItem("name"),
+    email: localStorage.getItem("email"),
+  });
 
-  const [oppAmazonTitle, setOppAmazonTitle] = useState("");
-  const [oppAmazonPrice, setOppAmazonPrice] = useState("");
-  const [oppAmazonImage, setOppAmazonImage] = useState("");
-  const [p1Name, setP1Name] = useState("");
-  const [p1Email, setP1Email] = useState("");
-  const [p2Name, setP2Name] = useState("");
-  const [p2Email, setP2Email] = useState("");
-  const [p1AmazonUrl, setP1AmazonUrl] = useState("");
-  const [p2AmazonUrl, setP2AmazonUrl] = useState("");
+  // Grouped state for opponent and player info
+  const [players, setPlayers] = useState({
+    oppAmazonTitle: "",
+    oppAmazonPrice: "",
+    oppAmazonImage: "",
+    p1Name: "",
+    p1Email: "",
+    p2Name: "",
+    p2Email: "",
+    p1AmazonUrl: "",
+    p2AmazonUrl: "",
+  });
 
+  // Other state
   const [reset, setReset] = useState(false);
   const [roomFull, setRoomFull] = useState(false);
   const [users, setUsers] = useState([]);
