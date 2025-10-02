@@ -19,14 +19,11 @@ const Board = ({
   });
 
   const checkRow = () => {
-    let ans = false;
-    for (let i = 0; i < 9; i += 3) {
-      ans |=
-        boardData[i] === boardData[i + 1] &&
-        boardData[i] === boardData[i + 2] &&
-        boardData[i] !== "";
-    }
-    return ans;
+    return [0, 3, 6].some(
+      i => boardData[i] === boardData[i + 1] &&
+           boardData[i] === boardData[i + 2] &&
+           boardData[i] !== ""
+    );
   };
   const checkCol = () => {
     let ans = false;
