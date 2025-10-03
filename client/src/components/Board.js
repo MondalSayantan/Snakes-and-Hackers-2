@@ -79,15 +79,14 @@ const Board = ({
 
   return (
     <div ref={boardRef} className="board">
-      <div className="input input-1" id="1" onClick={handleBoardClick}></div>
-      <div className="input input-2" id="2" onClick={handleBoardClick}></div>
-      <div className="input input-3" id="3" onClick={handleBoardClick}></div>
-      <div className="input input-4" id="4" onClick={handleBoardClick}></div>
-      <div className="input input-5" id="5" onClick={handleBoardClick}></div>
-      <div className="input input-6" id="6" onClick={handleBoardClick}></div>
-      <div className="input input-7" id="7" onClick={handleBoardClick}></div>
-      <div className="input input-8" id="8" onClick={handleBoardClick}></div>
-      <div className="input input-9" id="9" onClick={handleBoardClick}></div>
+      {[...Array(9)].map((_, i) => (
+        <div
+          key={i}
+          className={`input input-${i + 1}`}
+          id={String(i + 1)}
+          onClick={handleBoardClick}
+        ></div>
+      ))}
     </div>
   );
 };
