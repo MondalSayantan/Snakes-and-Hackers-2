@@ -7,42 +7,56 @@ import dice from "../assets/dice.jpg";
 
 const Join = () => {
   const navigate = useNavigate();
-  const [url, setUrl] = useState(null);
-  const [roomCode, setRoomCode] = useState(null);
+  const [url, setUrl] = useState("");
+  const [roomCode, setRoomCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+
+  const validateEmail = (value) => /\S+@\S+\.\S+/.test(value);
+  const validateUrl = (value) => /https?:\/\/.+/i.test(value);
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
-    if (url && roomCode) {
-      try {
-        const response = await axios.post(`${endpoint}/api/amazon`, {
-          amazonUrl: url,
-        });
-        if (response.status === 200) {
-          localStorage.setItem("amazonTitle", response.data.title);
-          localStorage.setItem("amazonPrice", response.data.price);
-          localStorage.setItem("amazonImage", response.data.image);
-          localStorage.setItem("amazonUrl", url);
-          localStorage.setItem("name", name);
-          localStorage.setItem("email", email);
-          setLoading(false);
-          navigate(`/play?roomCode=${roomCode}`);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      alert("Please enter a valid URL");
-    }
-    setLoading(false);
-  };
+    setError("");
 
-  if (loading) {
-    document.getElementById("submit-btn").innerText = "Loading...";
-  }
+    if (!roomCode.trim() || !name.trim() || !email.trim() || !url.trim()) {
+      setError("Room code, name, email and Amazon URL are required.");
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!validateUrl(url)) {
+      setError("Please enter a valid Amazon URL (must start with http:// or https://).");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post(`${endpoint}/api/amazon`, {
+        amazonUrl: url,
+      });
+      if (response.status === 200) {
+        localStorage.setItem("amazonTitle", response.data.title);
+        localStorage.setItem("amazonPrice", response.data.price);
+        localStorage.setItem("amazonImage", response.data.image);
+        localStorage.setItem("amazonUrl", url);
+        localStorage.setItem("name", name);
+        localStorage.setItem("email", email);
+        navigate(`/play?roomCode=${roomCode}`);
+      } else {
+        setError("Failed to fetch product details. Try another URL.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch product details. Try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -55,6 +69,7 @@ const Join = () => {
             type="text"
             placeholder="Room Code"
             name="roomCode"
+            value={roomCode}
             onChange={(event) => setRoomCode(event.target.value)}
             min="3"
           />
@@ -62,6 +77,7 @@ const Join = () => {
             type="text"
             placeholder="Your Name"
             name="name"
+            value={name}
             onChange={(event) => setName(event.target.value)}
             min="3"
           />
@@ -69,6 +85,7 @@ const Join = () => {
             type="text"
             placeholder="Your Email"
             name="email"
+            value={email}
             onChange={(event) => setEmail(event.target.value)}
             min="3"
           />
@@ -76,11 +93,13 @@ const Join = () => {
             type="text"
             placeholder="Amazon URL"
             name="amazonUrl"
+            value={url}
             onChange={(event) => setUrl(event.target.value)}
           />
-          <button type="submit" id="submit-btn">
-            Join!
+          <button type="submit" id="submit-btn" disabled={loading}>
+            {loading ? "Loading..." : "Join!"}
           </button>
+          {error && <div style={{ color: "#ff6b6b" }}>{error}</div>}
           <span>
             Don't have a room code? <Link to="/create">Create One.</Link>
           </span>
