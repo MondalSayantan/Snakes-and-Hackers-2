@@ -8,42 +8,59 @@ import dice from "../assets/dice.jpg";
 
 const Create = () => {
   const navigate = useNavigate();
-  const roomCode = randomCodeGenerator(5);
-  const [url, setUrl] = useState(null);
+  // generate room code once per component mount
+  const [roomCode] = useState(() => randomCodeGenerator(5));
+  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+
+  const validateEmail = (value) => /\S+@\S+\.\S+/.test(value);
+  const validateUrl = (value) => /https?:\/\/.+/i.test(value);
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
-    if (url) {
-      try {
-        const response = await axios.post(`${endpoint}/api/amazon`, {
-          amazonUrl: url,
-        });
-        if (response.status === 200) {
-          localStorage.setItem("amazonTitle", response.data.title);
-          localStorage.setItem("amazonPrice", response.data.price);
-          localStorage.setItem("amazonImage", response.data.image);
-          localStorage.setItem("amazonUrl", url);
-          localStorage.setItem("name", name);
-          localStorage.setItem("email", email);
-          navigate(`/play?roomCode=${roomCode}`);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      alert("Please enter a valid URL");
+    setError("");
+
+    if (!name.trim() || !email.trim() || !url.trim()) {
+      setError("Name, email and Amazon URL are required.");
+      return;
     }
-    setLoading(false);
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!validateUrl(url)) {
+      setError("Please enter a valid Amazon URL (must start with http:// or https://).");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post(`${endpoint}/api/amazon`, {
+        amazonUrl: url,
+      });
+      if (response.status === 200) {
+        localStorage.setItem("amazonTitle", response.data.title);
+        localStorage.setItem("amazonPrice", response.data.price);
+        localStorage.setItem("amazonImage", response.data.image);
+        localStorage.setItem("amazonUrl", url);
+        localStorage.setItem("name", name);
+        localStorage.setItem("email", email);
+        navigate(`/play?roomCode=${roomCode}`);
+      } else {
+        setError("Failed to fetch product details. Try another URL.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch product details. Try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (loading) {
-    document.getElementById("submit-btn").innerText = "Loading...";
-  }
+  // loading state reflected via button disabled text
 
   return (
     <>
@@ -56,6 +73,7 @@ const Create = () => {
             type="text"
             placeholder="Your Name"
             name="name"
+            value={name}
             onChange={(event) => setName(event.target.value)}
             min="3"
           />
@@ -63,6 +81,7 @@ const Create = () => {
             type="text"
             placeholder="Your Email"
             name="email"
+            value={email}
             onChange={(event) => setEmail(event.target.value)}
             min="3"
           />
@@ -70,12 +89,14 @@ const Create = () => {
             type="text"
             placeholder="Amazon URL"
             name="amazonUrl"
+            value={url}
             onChange={(event) => setUrl(event.target.value)}
             min="3"
           />
-          <button type="submit" id="submit-btn">
-            CREATE!
+          <button type="submit" id="submit-btn" disabled={loading}>
+            {loading ? "Loading..." : "CREATE!"}
           </button>
+          {error && <div style={{ color: "#ff6b6b" }}>{error}</div>}
           <span>
             Already have a room code? <Link to="/join">Join Room.</Link>
           </span>
